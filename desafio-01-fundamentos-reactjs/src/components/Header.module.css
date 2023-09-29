@@ -1,0 +1,9 @@
+.header {  
+  display: block;
+  height: 12.5rem;
+  width: 100vw;
+  background: var(--gray-700);
+  display: flex;
+  justify-content: center;
+  top: 0;
+}
