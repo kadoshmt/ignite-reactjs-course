@@ -26,6 +26,7 @@ Apesar de serem poucas funcionalidades, a ideia deste desafio foi relembrar conc
 - Propriedades
 - Componentização
 
+ As informações sobre este desafio podem ser encontradas <a href="https://efficient-sloth-d85.notion.site/Desafio-01-Praticando-os-conceitos-do-ReactJS-91fd63dd1a5b4a2796152de293ec1074" target="_blank">neste link</a>.
 
 ## Instalação
 
