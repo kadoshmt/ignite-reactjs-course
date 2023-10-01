@@ -31,6 +31,16 @@ Aplicação de controle de tarefas no estilo **to-do list**, que contém as segu
 Link do repositório
 </a>
 
+## Módulo 02
+
+### Timer Pomodoro 
+
+Aplicação completa no React utilizando roteamento e diversos conceitos importantes do ecossistema React como ContextAPI, useReducer, immer e muito mais.
+
+<a href="https://github.com/kadoshmt/ignite-reactjs-course/tree/main/02-ignite-timer" target="_blank">
+Link do repositório
+</a>
+
 ## Autor
 
 <div align="center">
