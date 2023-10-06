@@ -41,6 +41,15 @@ Aplicação completa no React utilizando roteamento e diversos conceitos importa
 Link do repositório
 </a>
 
+### Desafio 2 - App Coffee Delivery
+
+Aplicação para gerenciar um carrinho de compras de uma cafeteria fictícia, que contém as seguintes funcionalidades: Estados; ContextAPI; LocalStorage; Imutabilidade do estado; Listas e chaves no ReactJS; Propriedades; Componentização;
+
+
+<a href="https://github.com/kadoshmt/ignite-reactjs-course/tree/main/desafio-02-coffee-delivery" target="_blank">
+Link do repositório
+</a>
+
 ## Autor
 
 <div align="center">
