@@ -20,26 +20,35 @@ import {
   RadioButtonInput,
   RadioButton,
   OrderPaymentOptions,
+  InputError,
+  LabelError,
 } from './styles'
 import { useState } from 'react'
 import { useFormContext } from 'react-hook-form'
+import { OrderFormData } from '../..'
 
 export function OrderForm() {
   // const [selectedOption, setSelectedOption] = useState<number | null>(null)
-  const [selectedOption, setSelectedOption] = useState('money')
+  const [selectedOption, setSelectedOption] = useState('')
 
   const handleChangePaymentOption = (option: string) => {
     setSelectedOption(option)
   }
 
-  const { register } = useFormContext()
+  const {
+    register,
+    watch,
+    formState: { errors },
+  } = useFormContext<OrderFormData>()
+
+  const complement = watch('complement')
 
   return (
     <OrderFormWrapper>
       <OrderFormTitle>Complete seu pedido</OrderFormTitle>
       <OrderFormContainer>
         <HeaderLine>
-          <HeaderLineIcon iconColor="yellow">
+          <HeaderLineIcon color="yellow">
             <MapPinLine size={22} />
           </HeaderLineIcon>
           <div>
@@ -55,9 +64,12 @@ export function OrderForm() {
               id="zipcode"
               {...register('zipcode')}
               placeholder="CEP"
-              inputSize={12.5}
-              required
+              $inputSize={12.5}
+              $hasError={errors.zipcode !== undefined}
             />
+            {errors.zipcode && (
+              <InputError> {errors.zipcode?.message}</InputError>
+            )}
           </Col>
         </Row>
 
@@ -67,9 +79,12 @@ export function OrderForm() {
               id="street"
               {...register('street')}
               placeholder="Rua"
-              inputSize={35}
-              required
+              $inputSize={35}
+              $hasError={errors.street !== undefined}
             />
+            {errors.street && (
+              <InputError> {errors.street?.message}</InputError>
+            )}
           </Col>
         </Row>
 
@@ -79,18 +94,25 @@ export function OrderForm() {
               id="number"
               {...register('number')}
               placeholder="Número"
-              inputSize={12.5}
-              required
+              $inputSize={12.5}
+              $hasError={errors.number !== undefined}
             />
+            {errors.number && (
+              <InputError> {errors.number?.message}</InputError>
+            )}
           </Col>
           <Col>
             <InputText
               id="complement"
               {...register('complement')}
               placeholder="Complemento"
-              inputSize={21.75}
+              $inputSize={21.75}
+              $hasError={errors.complement !== undefined}
             />
-            <Optional>Opcional</Optional>
+            {!complement && <Optional>Opcional</Optional>}
+            {errors.complement && (
+              <InputError> {errors.complement?.message}</InputError>
+            )}
           </Col>
         </Row>
 
@@ -100,33 +122,38 @@ export function OrderForm() {
               id="neighborhood"
               {...register('neighborhood')}
               placeholder="Bairro"
-              inputSize={12.5}
-              required
+              $inputSize={12.5}
+              $hasError={errors.neighborhood !== undefined}
             />
+            {errors.neighborhood && (
+              <InputError> {errors.neighborhood?.message}</InputError>
+            )}
           </Col>
           <Col>
             <InputText
               id="city"
               {...register('city')}
               placeholder="Cidade"
-              inputSize={17.25}
-              required
+              $inputSize={17.25}
+              $hasError={errors.city !== undefined}
             />
+            {errors.city && <InputError> {errors.city?.message}</InputError>}
           </Col>
           <Col>
             <InputText
               id="state"
               {...register('state')}
               placeholder="UF"
-              inputSize={3.75}
-              required
+              $inputSize={3.75}
+              $hasError={errors.state !== undefined}
             />
+            {errors.state && <InputError> {errors.state?.message}</InputError>}
           </Col>
         </Row>
       </OrderFormContainer>
       <OrderFormContainer>
         <HeaderLine>
-          <HeaderLineIcon iconColor="purple">
+          <HeaderLineIcon color="purple">
             <CurrencyDollar size={22} />
           </HeaderLineIcon>
           <div>
@@ -139,16 +166,16 @@ export function OrderForm() {
         <OrderPaymentOptions>
           <>
             <RadioButtonInput
-              id="payment"
-              key="creditCard"
+              id="creditCardOption"
+              key="creditCardOption"
               value="creditCard"
               type="radio"
               defaultChecked={selectedOption === 'creditCard'}
-              // onChange={() => handleChangePaymentOption(index)}
+              {...register('payment')}
             />
             <RadioButton
-              type="button"
-              isChecked={selectedOption === 'creditCard'}
+              htmlFor="creditCardOption"
+              $isChecked={selectedOption === 'creditCard'}
               onClick={() => handleChangePaymentOption('creditCard')}
             >
               <CreditCard size={16} />
@@ -157,34 +184,34 @@ export function OrderForm() {
           </>
           <>
             <RadioButtonInput
-              id="payment"
-              key="debitCard"
+              id="debitCardOption"
+              key="debitCardOption"
               value="debitCard"
               type="radio"
               defaultChecked={selectedOption === 'debitCard'}
-              // onChange={() => handleChangePaymentOption(index)}
+              {...register('payment')}
             />
             <RadioButton
-              type="button"
-              isChecked={selectedOption === 'debitCard'}
+              htmlFor="debitCardOption"
+              $isChecked={selectedOption === 'debitCard'}
               onClick={() => handleChangePaymentOption('debitCard')}
             >
               <Bank size={16} />
-              Cartão de Dédito
+              Cartão de Débito
             </RadioButton>
           </>
           <>
             <RadioButtonInput
-              id="payment"
-              key="money"
+              id="moneyOption"
+              key="moneyOption"
               value="money"
               type="radio"
               defaultChecked={selectedOption === 'money'}
-              // onChange={() => handleChangePaymentOption(index)}
+              {...register('payment')}
             />
             <RadioButton
-              type="button"
-              isChecked={selectedOption === 'money'}
+              htmlFor="moneyOption"
+              $isChecked={selectedOption === 'money'}
               onClick={() => handleChangePaymentOption('money')}
             >
               <Money size={16} />
@@ -192,6 +219,7 @@ export function OrderForm() {
             </RadioButton>
           </>
         </OrderPaymentOptions>
+        {errors.payment && <LabelError> {errors.payment?.message}</LabelError>}
       </OrderFormContainer>
     </OrderFormWrapper>
   )

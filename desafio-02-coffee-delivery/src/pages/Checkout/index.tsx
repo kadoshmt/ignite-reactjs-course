@@ -14,16 +14,18 @@ const OrderFormValidationSchema = zod.object({
   zipcode: zod
     .string()
     .min(8, 'Informe um cep válido.')
-    .max(9, 'O CEP deve ter o padrão 78000000 ou 78000-000.'),
+    .max(9, 'Informe um cep válido.'),
   street: zod.string().min(3, 'Informe a rua'),
   number: zod.string().min(1, 'Informe o número'),
   complement: zod.string().optional(),
   neighborhood: zod.string().min(2, 'Informe o bairro'),
   city: zod.string().min(1, 'Informe a cidade'),
-  state: zod.string().min(1, 'Informe o estado'),
-  payment: zod.string().min(1, 'Selecione uma forma de pagamento'),
+  state: zod.string().min(2, '2 letras').max(2, '2 letras'),
+  payment: zod.string({
+    invalid_type_error: 'Você deve selecionar um método de pagamento.',
+  }),
 })
-type OrderFormData = zod.infer<typeof OrderFormValidationSchema>
+export type OrderFormData = zod.infer<typeof OrderFormValidationSchema>
 
 export function Checkout() {
   const { totalAmount, createNewOrder } = useContext(CartContext)
@@ -35,8 +37,7 @@ export function Checkout() {
   const { handleSubmit, reset } = orderForm
 
   function handleCreateNewOrder(data: OrderFormData) {
-    // createNewOrder(data)
-    console.log(data)
+    createNewOrder(data)
     reset()
   }
 
@@ -45,7 +46,7 @@ export function Checkout() {
       {totalAmount > 0 && (
         <FormProvider {...orderForm}>
           <OrderForm key="form" />
-          <OrderSummary key="sumary" />
+          <OrderSummary key="summary" />
         </FormProvider>
       )}
 

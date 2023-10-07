@@ -42,14 +42,14 @@ const ICON_COLORS = {
 } as const
 
 interface IconProps {
-  iconColor: keyof typeof ICON_COLORS
+  color: keyof typeof ICON_COLORS
 }
 
 export const HeaderLineIcon = styled.div.withConfig({
-  shouldForwardProp: (prop) => prop === 'iconColor' || prop === 'children',
+  shouldForwardProp: (prop) => prop === 'color' || prop === 'children',
 })<IconProps>`
   display: inline-block;
-  color: ${(props) => props.theme[ICON_COLORS[props.iconColor]]};
+  color: ${(props) => props.theme[ICON_COLORS[props.color]]};
 `
 export const HeaderLineTitle = styled.h3`
   font-size: 1rem;
@@ -70,7 +70,6 @@ export const Row = styled.div`
 `
 export const Col = styled.div`
   display: flex;
-  width: 100%;
   position: relative;
 `
 
@@ -84,7 +83,8 @@ export const BaseInputText = styled.input`
 `
 
 interface InputTextProps extends InputHTMLAttributes<HTMLInputElement> {
-  inputSize?: number
+  $inputSize?: number
+  $hasError?: boolean | undefined
 }
 
 export const Optional = styled.span`
@@ -98,10 +98,11 @@ export const Optional = styled.span`
 `
 
 export const InputText = styled.input<InputTextProps>`
-  width: ${(props) => (props.inputSize ? props.inputSize : 12.5)}rem;
+  width: ${(props) => (props.$inputSize ? props.$inputSize : 12.5)}rem;
   padding: 0.75rem;
   background-color: ${(props) => props.theme['base-input']};
-  border: 1px solid ${(props) => props.theme['base-button']};
+  border: 1px solid
+    ${(props) => (props.$hasError ? 'red' : props.theme['base-button'])};
   border-radius: 4px;
   font-size: 14px;
   color: ${(props) => props.theme['base-text']};
@@ -121,6 +122,27 @@ export const InputText = styled.input<InputTextProps>`
   }
 `
 
+export const InputError = styled.small`
+  display: block;
+  position: absolute;
+  right: 0;
+  top: 0;
+  margin: 0.25rem 0.5rem 0 0;
+  color: red;
+  font-size: 12px;
+`
+
+export const LabelError = styled.p`
+  display: block;
+  width: 100%;
+  padding: 0.5rem;
+  text-align: center;
+  border: 1px solid red;
+  color: red;
+  margin-top: 1rem;
+  font-size: 12px;
+`
+
 export const OrderPaymentOptions = styled.div`
   display: flex;
   align-items: center;
@@ -130,11 +152,11 @@ export const OrderPaymentOptions = styled.div`
   margin-top: 1rem;
 `
 
-interface RadioButtonProps extends InputHTMLAttributes<HTMLInputElement> {
-  isChecked: boolean
+interface RadioButtonProps extends InputHTMLAttributes<HTMLLabelElement> {
+  $isChecked: boolean
 }
 
-export const RadioButton = styled.button<RadioButtonProps>`
+export const RadioButton = styled.label<RadioButtonProps>`
   display: flex;
   justify-content: flex-start;
   align-items: center;
@@ -143,13 +165,13 @@ export const RadioButton = styled.button<RadioButtonProps>`
   font-size: 0.75rem;
   text-transform: uppercase;
   background-color: ${(props) =>
-    props.isChecked
+    props.$isChecked
       ? props.theme['purple-light']
       : (props) => props.theme['base-button']};
   color: ${(props) => props.theme['base-text']};
   border: 1px solid transparent;
   border-color: ${(props) =>
-    props.isChecked ? props.theme.purple : 'transparent'};
+    props.$isChecked ? props.theme.purple : 'transparent'};
   border-radius: 6px;
   cursor: pointer;
   transition: 0.3s;

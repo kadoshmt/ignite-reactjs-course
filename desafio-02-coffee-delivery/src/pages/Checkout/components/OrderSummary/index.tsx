@@ -43,8 +43,8 @@ export function OrderSummary() {
       <SummaryTitle>Cafés Selecionados</SummaryTitle>
       <SummaryContainer>
         {cartItems.map((item) => (
-          <>
-            <CoffeeCard key={item.id}>
+          <div key={item.id}>
+            <CoffeeCard>
               <Info>
                 <Coffee src={item.imageUrl} alt={item.title} />
                 <Details>
@@ -77,7 +77,7 @@ export function OrderSummary() {
               <Price>R$ {formattedPrice(item.price * item.amount)}</Price>
             </CoffeeCard>
             <Line />
-          </>
+          </div>
         ))}
         <PriceWraper>
           <PriceLine>

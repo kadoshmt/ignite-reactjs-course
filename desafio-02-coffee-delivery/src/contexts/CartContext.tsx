@@ -1,4 +1,5 @@
 import { ReactNode, createContext, useEffect, useState } from 'react'
+import { useNavigate } from 'react-router-dom'
 
 interface CartItem {
   id: string
@@ -58,6 +59,8 @@ export function CartContextProvider({ children }: CartContextProviderProps) {
   const [deliveryTax, setDeliveryTax] = useState<number>(12.0)
   const [totalPrice, setTotalPrice] = useState<number>(0)
   const [order, setOrder] = useState<Order | undefined>(undefined)
+
+  const navigate = useNavigate()
 
   function addItemToCart(item: CartItem) {
     const findItem = cartItems.find((cart) => cart.id === item.id)
@@ -128,6 +131,9 @@ export function CartContextProvider({ children }: CartContextProviderProps) {
       totalPrice,
     }
     setOrder(order)
+    setCartItems([])
+    setTotalAmount(0)
+    navigate('/success')
   }
 
   useEffect(() => {
