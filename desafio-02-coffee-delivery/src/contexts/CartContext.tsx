@@ -1,3 +1,4 @@
+import { produce } from 'immer'
 import { ReactNode, createContext, useEffect, useState } from 'react'
 import { useNavigate } from 'react-router-dom'
 
@@ -63,28 +64,25 @@ export function CartContextProvider({ children }: CartContextProviderProps) {
   const navigate = useNavigate()
 
   function addItemToCart(item: CartItem) {
-    const findItem = cartItems.find((cart) => cart.id === item.id)
-    if (!findItem) {
+    const findItemIndex = cartItems.findIndex((cart) => cart.id === item.id)
+    if (findItemIndex === -1) {
       setCartItems((state) => [...state, item])
       setTotalAmount((state) => state + item.amount)
     } else {
-      const { amount } = findItem
-      findItem.amount = item.amount
-      setCartItems((state) => [
-        ...state.filter((cart) => cart.id !== item.id),
-        findItem,
-      ])
-      setTotalAmount((state) => state - amount + item.amount)
+      const newCart = produce(cartItems, (draft) => {
+        draft[findItemIndex].amount = item.amount
+      })
+      setCartItems(newCart)
     }
   }
 
   function removeItemOfCart(itemId: string) {
     const findItemIndex = cartItems.findIndex((cart) => cart.id === itemId)
     if (findItemIndex > -1) {
-      const amoutToDecrease = cartItems[findItemIndex].amount
-      const newCart = cartItems.filter((cart) => cart.id !== itemId)
+      const newCart = produce(cartItems, (draft) => {
+        draft.splice(findItemIndex, 1)
+      })
       setCartItems(newCart)
-      setTotalAmount((state) => state - amoutToDecrease)
     }
   }
 
@@ -92,10 +90,10 @@ export function CartContextProvider({ children }: CartContextProviderProps) {
     const findItemIndex = cartItems.findIndex((cart) => cart.id === itemId)
     if (findItemIndex > -1) {
       if (cartItems[findItemIndex].amount <= 9) {
-        const newCart = [...cartItems]
-        newCart[findItemIndex].amount++
+        const newCart = produce(cartItems, (draft) => {
+          draft[findItemIndex].amount++
+        })
         setCartItems(newCart)
-        setTotalAmount((state) => state++)
       }
     }
   }
@@ -104,10 +102,10 @@ export function CartContextProvider({ children }: CartContextProviderProps) {
     const findItemIndex = cartItems.findIndex((cart) => cart.id === itemId)
     if (findItemIndex > -1) {
       if (cartItems[findItemIndex].amount > 0) {
-        const newCart = [...cartItems]
-        newCart[findItemIndex].amount--
+        const newCart = produce(cartItems, (draft) => {
+          draft[findItemIndex].amount--
+        })
         setCartItems(newCart)
-        setTotalAmount((state) => state--)
       }
     }
   }
@@ -141,7 +139,12 @@ export function CartContextProvider({ children }: CartContextProviderProps) {
       return acc + item.amount * item.price
     }, 0)
 
+    const newAmount = cartItems.reduce((acc, item) => {
+      return acc + item.amount
+    }, 0)
+
     setItemsPrice(totalPriceOfCart)
+    setTotalAmount(newAmount)
     setTotalPrice(totalPriceOfCart + deliveryTax)
   }, [totalAmount, cartItems, deliveryTax])
 
