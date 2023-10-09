@@ -1,6 +1,15 @@
-import { produce } from 'immer'
-import { ReactNode, createContext, useEffect, useState } from 'react'
+import { ReactNode, createContext, useEffect, useReducer } from 'react'
 import { useNavigate } from 'react-router-dom'
+import { cartReducer, cartStateType } from '../reducers/cart/reducer'
+import {
+  addItemToCartAction,
+  createNewOrderAction,
+  decreaseItemCartAction,
+  increaseItemCartAction,
+  removeItemOfCartAction,
+  setDeliverytaxValueAction,
+  setTotalPriceAndAmount,
+} from '../reducers/cart/actions'
 
 interface CartItem {
   id: string
@@ -53,65 +62,61 @@ interface CartContextProviderProps {
 
 export const CartContext = createContext({} as CartContextType)
 
+const initialStateArgs: cartStateType = {
+  cartItems: [],
+  totalAmount: 0,
+  itemsPrice: 0,
+  deliveryTax: 12.0,
+  totalPrice: 0,
+  order: undefined,
+}
+
 export function CartContextProvider({ children }: CartContextProviderProps) {
-  const [cartItems, setCartItems] = useState<CartItem[]>([])
-  const [totalAmount, setTotalAmount] = useState<number>(0)
-  const [itemsPrice, setItemsPrice] = useState<number>(0)
-  const [deliveryTax, setDeliveryTax] = useState<number>(12.0)
-  const [totalPrice, setTotalPrice] = useState<number>(0)
-  const [order, setOrder] = useState<Order | undefined>(undefined)
+  const [cartState, dispatch] = useReducer(
+    cartReducer,
+    initialStateArgs,
+    (initialState) => {
+      const storedStateAsJSON = localStorage.getItem(
+        '@coffee-delivery:cart-state-1.0.0',
+      )
+
+      if (storedStateAsJSON) {
+        return JSON.parse(storedStateAsJSON)
+      }
+
+      return initialState
+    },
+  )
+
+  const { cartItems, totalAmount, itemsPrice, deliveryTax, totalPrice, order } =
+    cartState
 
   const navigate = useNavigate()
 
+  useEffect(() => {
+    const stateJSON = JSON.stringify(cartState)
+
+    localStorage.setItem('@coffee-delivery:cart-state-1.0.0', stateJSON)
+  }, [cartState])
+
   function addItemToCart(item: CartItem) {
-    const findItemIndex = cartItems.findIndex((cart) => cart.id === item.id)
-    if (findItemIndex === -1) {
-      setCartItems((state) => [...state, item])
-      setTotalAmount((state) => state + item.amount)
-    } else {
-      const newCart = produce(cartItems, (draft) => {
-        draft[findItemIndex].amount = item.amount
-      })
-      setCartItems(newCart)
-    }
+    dispatch(addItemToCartAction(item))
   }
 
   function removeItemOfCart(itemId: string) {
-    const findItemIndex = cartItems.findIndex((cart) => cart.id === itemId)
-    if (findItemIndex > -1) {
-      const newCart = produce(cartItems, (draft) => {
-        draft.splice(findItemIndex, 1)
-      })
-      setCartItems(newCart)
-    }
+    dispatch(removeItemOfCartAction(itemId))
   }
 
   function increaseItemCart(itemId: string) {
-    const findItemIndex = cartItems.findIndex((cart) => cart.id === itemId)
-    if (findItemIndex > -1) {
-      if (cartItems[findItemIndex].amount <= 9) {
-        const newCart = produce(cartItems, (draft) => {
-          draft[findItemIndex].amount++
-        })
-        setCartItems(newCart)
-      }
-    }
+    dispatch(increaseItemCartAction(itemId))
   }
 
   function decreaseItemCart(itemId: string) {
-    const findItemIndex = cartItems.findIndex((cart) => cart.id === itemId)
-    if (findItemIndex > -1) {
-      if (cartItems[findItemIndex].amount > 0) {
-        const newCart = produce(cartItems, (draft) => {
-          draft[findItemIndex].amount--
-        })
-        setCartItems(newCart)
-      }
-    }
+    dispatch(decreaseItemCartAction(itemId))
   }
 
   function setDeliverytaxValue(value: number) {
-    setDeliveryTax(value)
+    dispatch(setDeliverytaxValueAction(value))
   }
 
   function getItemAmount(itemId: string) {
@@ -120,32 +125,12 @@ export function CartContextProvider({ children }: CartContextProviderProps) {
   }
 
   function createNewOrder(address: Address) {
-    const order = {
-      cartItems,
-      address,
-      totalAmount,
-      itemsPrice,
-      deliveryTax,
-      totalPrice,
-    }
-    setOrder(order)
-    setCartItems([])
-    setTotalAmount(0)
+    dispatch(createNewOrderAction(address))
     navigate('/success')
   }
 
   useEffect(() => {
-    const totalPriceOfCart = cartItems.reduce((acc, item) => {
-      return acc + item.amount * item.price
-    }, 0)
-
-    const newAmount = cartItems.reduce((acc, item) => {
-      return acc + item.amount
-    }, 0)
-
-    setItemsPrice(totalPriceOfCart)
-    setTotalAmount(newAmount)
-    setTotalPrice(totalPriceOfCart + deliveryTax)
+    dispatch(setTotalPriceAndAmount())
   }, [totalAmount, cartItems, deliveryTax])
 
   return (
