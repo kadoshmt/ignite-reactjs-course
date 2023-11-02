@@ -1,3 +1,18 @@
+import { ThemeProvider } from 'styled-components'
+import { defaultTheme } from './styles/themes/default.ts'
+import { BrowserRouter } from 'react-router-dom'
+import { GlobalStyle } from './styles/globals.ts'
+import { Router } from './Router.tsx'
+import { BlogProvider } from './contexts/BlogContext.tsx'
 export function App() {
-  return <h1>Desafio 03 - Github Blog</h1>
+  return (
+    <ThemeProvider theme={defaultTheme}>
+      <BrowserRouter>
+        <BlogProvider>
+          <Router />
+        </BlogProvider>
+      </BrowserRouter>
+      <GlobalStyle />
+    </ThemeProvider>
+  )
 }

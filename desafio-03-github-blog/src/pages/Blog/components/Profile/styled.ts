@@ -18,6 +18,7 @@ export const Avatar = styled.div`
 
   img {
     border-radius: 8px;
+    width: 148px;
   }
 `
 

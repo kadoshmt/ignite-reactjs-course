@@ -74,4 +74,17 @@ export const PostContent = styled.div`
   p {
     margin: 1.5rem 0;
   }
+
+  img {
+    max-width: 800px;
+  }
+
+  a {
+    color: ${(props) => props.theme.blue};
+    text-decoration: none;
+
+    &:hover {
+      text-decoration: underline;
+    }
+  }
 `

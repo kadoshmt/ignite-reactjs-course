@@ -1,24 +1,25 @@
+import { useContext } from 'react'
 import { Card } from './components/Card'
 import { Profile } from './components/Profile'
 import { SearchBox } from './components/SearchBox'
 import { BlogContainer, BlogPostsInfo, PostCards } from './styles'
+import { BlogContext } from '../../contexts/BlogContext'
 
 export function Blog() {
+  const { gitUser, issues } = useContext(BlogContext)
+
   return (
     <BlogContainer>
-      <Profile />
+      <Profile gitUser={gitUser} />
       <BlogPostsInfo>
         <h1>Publicações</h1>
-        <span>6 publicações</span>
+        <span>{issues.length} publicações</span>
       </BlogPostsInfo>
       <SearchBox />
       <PostCards>
-        <Card />
-        <Card />
-        <Card />
-        <Card />
-        <Card />
-        <Card />
+        {issues.map((post) => (
+          <Card key={post.number} post={post} />
+        ))}
       </PostCards>
     </BlogContainer>
   )

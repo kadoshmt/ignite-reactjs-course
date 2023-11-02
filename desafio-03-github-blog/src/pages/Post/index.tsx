@@ -14,54 +14,70 @@ import {
   faChevronLeft,
   faComment,
 } from '@fortawesome/free-solid-svg-icons'
+import { NavLink, useParams, Navigate } from 'react-router-dom'
+import { useContext, useEffect, useState } from 'react'
+import { BlogContext, Issue } from '../../contexts/BlogContext'
+import { ptBR } from 'date-fns/locale'
+import { formatDistanceToNow } from 'date-fns'
+import Markdown from 'react-markdown'
 
 export function Post() {
+  const { id } = useParams()
+  const { fetchPost } = useContext(BlogContext)
+  const [post, setPost] = useState<Issue>()
+
+  if (id === undefined) {
+    Navigate({ to: '/' })
+  }
+
+  async function handleFetchPost(id: string) {
+    const response = await fetchPost(id)
+    setPost(response)
+  }
+
+  useEffect(() => {
+    if (id) {
+      handleFetchPost(id)
+    }
+  }, [id])
+
   return (
     <PostContainer>
       <PostHeader>
         <PostLinks>
           <span>
-            <a href="">
+            <NavLink to="/">
               <FontAwesomeIcon icon={faChevronLeft} /> Voltar
-            </a>
+            </NavLink>
           </span>
           <span>
-            <a href="">
+            <a href={post?.html_url} target="_blank" rel="noreferrer">
               Github <FontAwesomeIcon icon={faArrowUpRightFromSquare} />
             </a>
           </span>
         </PostLinks>
-        <PostTitle>JavaScript data types and data structures</PostTitle>
+        <PostTitle>{post?.title}</PostTitle>
         <PostMetadata>
           <span>
             <FontAwesomeIcon icon={faGithub} />
-            cameronwll
+            {post?.user.login}
           </span>
           <span>
             <FontAwesomeIcon icon={faCalendarDay} />
-            Há 1 dia
+            {post &&
+              formatDistanceToNow(new Date(post.created_at), {
+                addSuffix: true,
+                locale: ptBR,
+              })}
           </span>
           <span>
-            <FontAwesomeIcon icon={faComment} />5 Comentários
+            <FontAwesomeIcon icon={faComment} />
+            {post?.comments} Comentários
           </span>
         </PostMetadata>
       </PostHeader>
       <PostContent>
-        <p>
-          Programming languages all have built-in data structures, but these
-          often differ from one language to another. This article attempts to
-          list the built-in data structures available in JavaScript and what
-          properties they have. These can be used to build other data
-          structures. Wherever possible, comparisons with other languages are
-          drawn.
-        </p>
-        <p>Dynamic typing</p>
-        <p>
-          JavaScript is a loosely typed and dynamic language. Variables in
-          JavaScript are not directly associated with any particular value type,
-          and any variable can be assigned (and re-assigned) values of all
-          types:
-        </p>
+        <Markdown>{post?.body}</Markdown>
       </PostContent>
     </PostContainer>
   )

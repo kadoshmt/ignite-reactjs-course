@@ -7,7 +7,6 @@ import {
   ProfileContainer,
 } from './styled'
 
-import avatarImg from '../../../../assets/avatar.png'
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import {
   faArrowUpRightFromSquare,
@@ -15,39 +14,40 @@ import {
   faUserGroup,
 } from '@fortawesome/free-solid-svg-icons'
 import { faGithub } from '@fortawesome/free-brands-svg-icons'
+import { GitUser } from '../../../../contexts/BlogContext'
 
-export function Profile() {
+interface ProfileProps {
+  gitUser?: GitUser
+}
+
+export function Profile({ gitUser }: ProfileProps) {
   return (
     <ProfileContainer>
       <Avatar>
-        <img src={avatarImg} alt="" />
+        {gitUser && <img src={gitUser?.html_url + '.png'} alt="" />}
       </Avatar>
       <InfoContainer>
         <InfoHeader>
-          <h2>Cameron Williamson</h2>
+          <h2>{gitUser?.name}</h2>
           <span>
-            <a href="/">
+            <a href={gitUser?.html_url} target="_blank" rel="noreferrer">
               Github <FontAwesomeIcon icon={faArrowUpRightFromSquare} />
             </a>
           </span>
         </InfoHeader>
-        <InfoDescription>
-          Tristique volutpat pulvinar vel massa, pellentesque egestas. Eu
-          viverra massa quam dignissim aenean malesuada suscipit. Nunc, volutpat
-          pulvinar vel mass.
-        </InfoDescription>
+        <InfoDescription>{gitUser?.bio}</InfoDescription>
         <InfoSocialMedia>
           <span>
             <FontAwesomeIcon icon={faGithub} />
-            cameronwll
+            {gitUser?.login}
           </span>
           <span>
             <FontAwesomeIcon icon={faBuilding} />
-            Rocketseat
+            {gitUser?.company}
           </span>
           <span>
             <FontAwesomeIcon icon={faUserGroup} />
-            32 Seguidores
+            {gitUser?.followers} seguidores
           </span>
         </InfoSocialMedia>
       </InfoContainer>
