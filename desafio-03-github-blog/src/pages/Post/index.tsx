@@ -15,16 +15,20 @@ import {
   faComment,
 } from '@fortawesome/free-solid-svg-icons'
 import { NavLink, useParams, Navigate } from 'react-router-dom'
-import { useContext, useEffect, useState } from 'react'
-import { BlogContext, Issue } from '../../contexts/BlogContext'
+import { BlogContext, Post } from '../../contexts/BlogContext'
 import { ptBR } from 'date-fns/locale'
 import { formatDistanceToNow } from 'date-fns'
 import Markdown from 'react-markdown'
+import { useContextSelector } from 'use-context-selector'
+import { useEffect, useState } from 'react'
 
 export function Post() {
   const { id } = useParams()
-  const { fetchPost } = useContext(BlogContext)
-  const [post, setPost] = useState<Issue>()
+  // const { fetchPost } = useContext(BlogContext)
+  const fetchPost = useContextSelector(BlogContext, (context) => {
+    return context.fetchPost
+  })
+  const [post, setPost] = useState<Post>()
 
   if (id === undefined) {
     Navigate({ to: '/' })

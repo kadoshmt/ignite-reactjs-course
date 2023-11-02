@@ -1,10 +1,10 @@
 import { formatDistanceToNow } from 'date-fns'
 import ptBR from 'date-fns/locale/pt-BR'
-import { Issue } from '../../../../contexts/BlogContext'
+import { Post } from '../../../../contexts/BlogContext'
 import { CardHeader, CardText, CardContainer } from './styles'
 
 interface CardProps {
-  post: Issue
+  post: Post
 }
 
 export function Card({ post }: CardProps) {

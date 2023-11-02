@@ -1,11 +1,6 @@
-import {
-  ReactNode,
-  createContext,
-  useCallback,
-  useEffect,
-  useState,
-} from 'react'
+import { ReactNode, useCallback, useEffect, useState } from 'react'
 import { api } from '../lib/axios'
+import { createContext } from 'use-context-selector'
 
 export interface GitUser {
   login: string
@@ -16,7 +11,7 @@ export interface GitUser {
   followers?: number
 }
 
-export interface Issue {
+export interface Post {
   title: string
   url: string
   html_url: string
@@ -31,9 +26,9 @@ export interface Issue {
 
 interface BlogContextType {
   gitUser?: GitUser
-  issues: Issue[]
-  fetchIssues: (query?: string) => Promise<void>
-  fetchPost: (id: string) => Promise<Issue>
+  posts: Post[]
+  fetchPosts: (query?: string) => Promise<void>
+  fetchPost: (id: string) => Promise<Post>
 }
 
 interface BlogProviderProps {
@@ -44,7 +39,7 @@ export const BlogContext = createContext({} as BlogContextType)
 
 export function BlogProvider({ children }: BlogProviderProps) {
   const [gitUser, setGitUser] = useState<GitUser>()
-  const [issues, setIssues] = useState<Issue[]>([])
+  const [posts, setPosts] = useState<Post[]>([])
   // const [issue, setIssue] = useState<Issue>()
   const repo = 'reactjs-github-blog-challenge'
   const owner = 'rocketseat-education'
@@ -54,7 +49,7 @@ export function BlogProvider({ children }: BlogProviderProps) {
     setGitUser(response.data)
   }, [])
 
-  const fetchIssues = useCallback(async (query?: string) => {
+  const fetchPosts = useCallback(async (query?: string) => {
     const repo = 'reactjs-github-blog-challenge'
     const user = 'rocketseat-education'
     const response = await api.get('/search/issues', {
@@ -62,7 +57,7 @@ export function BlogProvider({ children }: BlogProviderProps) {
         q: `${query} repo:${user}/${repo}`,
       },
     })
-    setIssues(response.data.items)
+    setPosts(response.data.items)
   }, [])
 
   async function fetchPost(id: string) {
@@ -73,14 +68,11 @@ export function BlogProvider({ children }: BlogProviderProps) {
 
   useEffect(() => {
     fetchGitUserInfo()
-  }, [])
-
-  useEffect(() => {
-    fetchIssues('')
-  }, [fetchIssues])
+    fetchPosts('')
+  }, [fetchGitUserInfo, fetchPosts])
 
   return (
-    <BlogContext.Provider value={{ gitUser, issues, fetchIssues, fetchPost }}>
+    <BlogContext.Provider value={{ gitUser, posts, fetchPosts, fetchPost }}>
       {children}
     </BlogContext.Provider>
   )
