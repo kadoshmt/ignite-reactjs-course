@@ -41,7 +41,7 @@ $ pnpm install
 $ yarn install
 
 # Execute os testes da aplicação com o comando  abaixo
-$ npm run dev
+$ pnpm run dev
 ```
 
 ## Tecnologias

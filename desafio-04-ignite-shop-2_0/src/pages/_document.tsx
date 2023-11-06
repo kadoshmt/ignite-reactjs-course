@@ -1,4 +1,5 @@
 import { Html, Head, Main, NextScript } from 'next/document'
+import { CartProvider } from 'use-shopping-cart/react'
 
 export default function Document() {
   return (    
@@ -8,8 +9,8 @@ export default function Document() {
         <link rel="preconnect" href="https://fonts.gstatic.com" crossOrigin="anonymous" />
         <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;700&display=swap" rel="stylesheet" />
       </Head>
-      <body>
-        <Main />
+      <body>      
+        <Main />      
         <NextScript />
       </body>
     </Html>
